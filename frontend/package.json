@@ -4,12 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "build": "nuxt build",
+    "build_nuxt": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "lint:style": "stylelint **/*.{vue,css} --ignore-path .gitignore",
     "lint": "npm run lint:js && npm run lint:style",
+    "cp": "cp ../config.js  ./config.js",
+    "build": "gcloud builds submit --tag gcr.io/ogorod-289421/ui",
+    "deploy": "gcloud run deploy ui --image gcr.io/ogorod-289421/ui --platform managed --timeout 10 --memory 128",
+    "all": "npm run cp && npm run build && npm run deploy",
     "test": "jest"
   },
   "lint-staged": {

@@ -1,23 +1,24 @@
-const router = require('express').Router();
+const Router = require('@koa/router');
+const router = new Router();
 const {Datastore} = require('@google-cloud/datastore');
 
 // Creates a client
 const datastore = new Datastore();
 
-router.get('/devices', async (req, res) => {
+router.get('/devices', async (ctx) => {
   const query = datastore.createQuery('Devices')
   const [devices] = await datastore.runQuery(query)
-  return res.json(devices.map(x => {
+  ctx.body = (devices.map(x => {
     x.id=x[Datastore.KEY].id
     return x
   }))
 })
-router.post('/devices/:id', async(req,res) => {
-  const [device] = await datastore.get(datastore.key(['Devices',+req.params.id]))
-  device.on = req.body.on
-  device.disableDate = req.body.disableDate
+router.post('/devices/:id', async(ctx) => {
+  const [device] = await datastore.get(datastore.key(['Devices',+ctx.params.id]))
+  device.on = ctx.request.body.on
+  device.disableDate = ctx.request.body.disableDate
   await datastore.update(device)
   // console.dir(up, {depth:null})
-  res.status(201).send()
+  ctx.status = 201
 })
 module.exports = router

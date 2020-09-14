@@ -8,7 +8,7 @@
       <i-switch :value="isOn" @on-change="toggleDevice"></i-switch>
     </div>
     <div v-if="device.on">
-      <div v-if="disableDate">выключится через {{ disableRange }}</div>
+      <div v-if="disableRange">выключится через {{ disableRange }}</div>
     </div>
     <TimePicker
       v-else
