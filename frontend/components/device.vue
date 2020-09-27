@@ -40,6 +40,8 @@ export default {
   watch: {
     'device.on'() {
       this.startInterval()
+      this.disableDate = ''
+      this.disableRange = ''
     },
   },
   mounted() {
@@ -50,12 +52,24 @@ export default {
   },
   methods: {
     async toggleDevice(value) {
-      await this.$api.post(`/devices/${this.device.id}`, {
-        on: value,
-        disableDate:
-          moment(this.disableDate) > moment() ? this.disableDate : undefined,
-      })
-      this.$emit('refresh')
+      const disableDate =
+        moment(this.disableDate) > moment() ? this.disableDate : undefined
+      try {
+        await this.$api.post(`/devices/${this.device.id}`, {
+          on: value,
+          disableDate,
+          disableSecs: disableDate
+            ? Math.ceil(moment(disableDate).diff(moment()) / 1000)
+            : undefined,
+        })
+        this.$emit('refresh')
+      } catch (e) {
+        this.$Message.error({
+          content: JSON.stringify(e.response || e),
+          duration: 10,
+          closable: true,
+        })
+      }
     },
     changeDisableDate(val) {
       this.disableDate = moment()
@@ -64,7 +78,6 @@ export default {
         .add(val.slice(-2), 's')
     },
     calcDisableRange() {
-      console.log('calc')
       if (!this.device.disableDate) {
         this.disableDate = ''
         return
@@ -83,7 +96,6 @@ export default {
       )}:${Math.floor((duration.asSeconds() % 3600) % 60)}`
     },
     startInterval(on) {
-      console.log(this.device.on)
       if (this.device.on) {
         if (this.device.disableDate)
           this.clearInterval = setInterval(this.calcDisableRange, 1000)

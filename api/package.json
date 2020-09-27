@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/datastore": "^6.1.0",
+    "@google-cloud/iot": "^2.1.1",
     "@koa/cors": "^3.1.0",
     "@koa/router": "^8.0.8",
     "koa": "^2.11.0",

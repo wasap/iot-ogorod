@@ -21,7 +21,7 @@ app.use(async (ctx, next)=>{
     if(ctx.headers.token === config.token){
         return next()
     }
-    throw new Error('unauthorized')
+    return next('unauthorized')
 })
 
 
