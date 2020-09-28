@@ -84,7 +84,7 @@ export default {
       }
 
       const duration = moment.duration(
-        moment(this.device.disableDate).diff(moment())
+        moment(this.device.disableDate).add(15, 's').diff(moment())
       )
       if (duration.asMilliseconds() <= 0) {
         this.device.on = false
