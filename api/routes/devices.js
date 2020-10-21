@@ -15,12 +15,12 @@ router.get('/devices', async (ctx) => {
   const query = datastore.createQuery('Devices')
   const [devices] = await datastore.runQuery(query)
   ctx.body = (devices.map(x => {
-    x.id = x[Datastore.KEY].name
+    x.id = x[Datastore.KEY].id
     return x
   }))
 })
 router.post('/devices/:id', async (ctx) => {
-  const [device] = await datastore.get(datastore.key(['Devices', ctx.params.id]))
+  const [device] = await datastore.get(datastore.key(['Devices', +ctx.params.id]))
   device.on = ctx.request.body.on
   device.disableDate = ctx.request.body.disableDate
   
@@ -29,7 +29,7 @@ router.post('/devices/:id', async (ctx) => {
     config.projectId,
     config.cloudRegion,
     config.registryId,
-    device[Datastore.KEY].name
+    device.deviceId
   );
   const binaryData = Buffer.from(JSON.stringify({ isOn: device.on, disableSecs: ctx.request.body.disableSecs, isCommand: true }));
   const request = {

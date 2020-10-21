@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *****************************************************************************/
-
+#include "bme_280.h"
 #if defined(ARDUINO_SAMD_MKR1000) or defined(ESP32)
 #define __SKIP_ESP8266__
 #endif
@@ -54,6 +54,9 @@ void setup()
   digitalWrite(PIN_D6, HIGH);
   pinMode(PIN_D5, OUTPUT);
   digitalWrite(PIN_D5, HIGH);
+    if (!bme.begin(BME_ADDR)) {
+        Serial.println("Could not find a valid BME280 sensor, check wiring!");
+    }
 }
 
 unsigned long lastMillis = 0;
@@ -77,10 +80,10 @@ void loop()
   }
 
   // TODO: Replace with your code here
-//  if (millis() - lastMillis > 60000)
-//  {
-//    lastMillis = millis();
-//    publishTelemetry(getDefaultSensor());
-//  }
+ if (millis() - lastMillis > 5000)
+ {
+   lastMillis = millis();
+   printBME280();
+ }
 }
 #endif
