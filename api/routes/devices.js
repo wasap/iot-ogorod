@@ -1,15 +1,15 @@
-const Router = require('@koa/router');
-const router = new Router();
-const { Datastore } = require('@google-cloud/datastore');
+const Router = require('@koa/router')
+const router = new Router()
+const { Datastore } = require('@google-cloud/datastore')
 const config = require('../config')
 
-const iot = require('@google-cloud/iot');
+const iot = require('@google-cloud/iot')
 const iotClient = new iot.v1.DeviceManagerClient({
   // optional auth parameters.
-});
+})
 
 // Creates a client
-const datastore = new Datastore();
+const datastore = new Datastore()
 
 router.get('/devices', async (ctx) => {
   const query = datastore.createQuery('Devices')
@@ -23,20 +23,20 @@ router.post('/devices/:id', async (ctx) => {
   const [device] = await datastore.get(datastore.key(['Devices', +ctx.params.id]))
   device.on = ctx.request.body.on
   device.disableDate = ctx.request.body.disableDate
-  
 
   const formattedName = iotClient.devicePath(
     config.projectId,
     config.cloudRegion,
     config.registryId,
     device.deviceId
-  );
-  const binaryData = Buffer.from(JSON.stringify({ isOn: device.on, disableSecs: ctx.request.body.disableSecs, isCommand: true }));
+  )
+  const binaryData = Buffer.from(JSON.stringify({ isOn: device.on, disableSecs: ctx.request.body.disableSecs, isCommand: true }))
   const request = {
     name: formattedName,
-    binaryData: binaryData,
-  };
-  const responses = await iotClient.sendCommandToDevice(request);
+    binaryData: binaryData
+  }
+  // eslint-disable-next-line no-unused-vars
+  const responses = await iotClient.sendCommandToDevice(request)
   await datastore.update(device)
 
   ctx.status = 201
