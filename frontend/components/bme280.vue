@@ -77,7 +77,7 @@ export default {
           labels: this.telemetry.map((x) => moment(x[0]).format('DD/MM HH:mm')),
           datasets: [
             {
-              label: `${metric.key} ${this.telemetry.slice(-1)[0][1][id]}`,
+              label: metric.key,
               backgroundColor: metric.color,
               data: this.telemetry.map((x) => x[1][id]),
             },
