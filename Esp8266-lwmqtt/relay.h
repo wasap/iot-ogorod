@@ -1,4 +1,4 @@
-#include <ArduinoJson.h>
+
 
 int PIN_D6 = 12;
 int PIN_D5 = 14;
@@ -25,16 +25,9 @@ void _setRelay(bool state){
   }
 }
 
-void callRelay(String params){
+void callRelay(bool isOn, int disableSecs){
   _blinkPlate(1);
-  Serial.println("params: " + params);
   
-  StaticJsonDocument<300> doc;
-  deserializeJson(doc, params);
-  bool isOn = doc["isOn"];
-  bool isCommand = doc["isCommand"];
-  int disableSecs = doc["disableSecs"];
-  if(isCommand){
      _setRelay(isOn);
     if(isOn){
       if(disableSecs > 0){
@@ -42,5 +35,5 @@ void callRelay(String params){
         _setRelay(false);
       }
     }
-  }
+  
 }

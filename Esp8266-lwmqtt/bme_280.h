@@ -1,8 +1,6 @@
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
-#include <ESP8266HTTPClient.h>
-// https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266HTTPClient/examples/PostHttpClient/PostHttpClient.ino
 
 #define BME_ADDR 0x76
 
@@ -11,7 +9,7 @@
 Adafruit_BME280 bme; // I2C
 
 
-void printBME280() {
+String printBME280() {
     Serial.print("Temperature = ");
     Serial.print(bme.readTemperature());
     Serial.println(" *C");
@@ -29,5 +27,7 @@ void printBME280() {
     Serial.print(bme.readHumidity());
     Serial.println(" %");
 
-    Serial.println();
+    
+    return "["+String(bme.readTemperature())+"," + String(bme.readPressure() / 100.0F * 0.75006)+","+String(bme.readHumidity())+"]";
+    
 }

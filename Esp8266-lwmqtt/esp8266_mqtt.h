@@ -20,6 +20,7 @@
 // You need to set certificates to All SSL cyphers and you may need to
 // increase memory settings in Arduino/cores/esp8266/StackThunk.cpp:
 //   https://github.com/esp8266/Arduino/issues/6811
+
 #include "WiFiClientSecureBearSSL.h"
 #include <time.h>
 
@@ -30,17 +31,11 @@
 #include "ciotc_config.h" // Wifi configuration here
 
 #include "relay.h"
+#include "bme_280.h"
+#include <ArduinoJson.h>
 //#include <future> 
 
-// !!REPLACEME!!
-// The MQTT callback function for commands and configuration updates
-// Place your message handler code here.
-void messageReceived(String &topic, String &payload)
-{
-  Serial.println("incoming: " + topic + " - " + payload);
-  callRelay(payload);
-}
-///////////////////////////////
+
 
 // Initialize WiFi and MQTT for this board
 MQTTClient *mqttClient;
@@ -162,6 +157,29 @@ bool publishTelemetry(String subfolder, const char *data, int length)
 {
   return mqtt->publishTelemetry(subfolder, data, length);
 }
+
+// !!REPLACEME!!
+// The MQTT callback function for commands and configuration updates
+// Place your message handler code here.
+void messageReceived(String &topic, String &payload)
+{
+  Serial.println("incoming: " + topic + " - " + payload);
+  
+  StaticJsonDocument<300> doc;
+  deserializeJson(doc, payload);
+  
+  String deviceType = doc["deviceType"];
+  
+  if(deviceType == "relay"){
+    bool isOn = doc["isOn"];
+    int disableSecs = doc["disableSecs"];
+    callRelay(isOn, disableSecs);
+  }
+  if(deviceType=="bme280"){
+    publishTelemetry(printBME280());
+  }
+}
+///////////////////////////////
 
 void connect()
 {

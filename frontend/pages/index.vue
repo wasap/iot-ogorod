@@ -1,7 +1,8 @@
 <template>
   <div>
     <h4>Устройства</h4>
-    <device
+    <component
+      :is="device.type"
       v-for="device in devices"
       :key="device.id"
       :device="device"
@@ -11,9 +12,10 @@
 </template>
 
 <script>
-import Device from '@/components/device'
+import Relay from '@/components/relay'
+import Bme280 from '@/components/bme280'
 export default {
-  components: { Device },
+  components: { Relay, Bme280 },
   async asyncData({ $api }) {
     const devices = await $api.$get('/devices')
     return {

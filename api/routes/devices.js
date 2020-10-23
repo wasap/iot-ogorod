@@ -30,7 +30,7 @@ router.post('/devices/:id', async (ctx) => {
     config.registryId,
     device.deviceId
   )
-  const binaryData = Buffer.from(JSON.stringify({ isOn: device.on, disableSecs: ctx.request.body.disableSecs, isCommand: true }))
+  const binaryData = Buffer.from(JSON.stringify({ isOn: device.on, disableSecs: ctx.request.body.disableSecs, deviceType: device.type }))
   const request = {
     name: formattedName,
     binaryData: binaryData
@@ -38,7 +38,6 @@ router.post('/devices/:id', async (ctx) => {
   // eslint-disable-next-line no-unused-vars
   const responses = await iotClient.sendCommandToDevice(request)
   await datastore.update(device)
-
   ctx.status = 201
 })
 module.exports = router

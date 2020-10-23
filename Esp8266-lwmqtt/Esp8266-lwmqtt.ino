@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *****************************************************************************/
-#include "bme_280.h"
+
 #if defined(ARDUINO_SAMD_MKR1000) or defined(ESP32)
 #define __SKIP_ESP8266__
 #endif
@@ -37,7 +37,11 @@ void loop(){
 
 #ifdef __ESP8266_MQTT__
 #include <CloudIoTCore.h>
+
 #include "esp8266_mqtt.h"
+
+
+
 
 #ifndef LED_BUILTIN
 #define LED_BUILTIN 13
@@ -80,10 +84,10 @@ void loop()
   }
 
   // TODO: Replace with your code here
- if (millis() - lastMillis > 5000)
+ if (millis() - lastMillis > 3600000)
  {
    lastMillis = millis();
-   printBME280();
+   publishTelemetry(printBME280());
  }
 }
 #endif
