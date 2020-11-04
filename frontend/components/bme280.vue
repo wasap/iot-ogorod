@@ -26,6 +26,31 @@
     </div>
 
     <Modal v-model="modal" width="auto">
+      <div>
+        <label>Месяц</label>
+        <Select
+          v-model="dateRange"
+          style="width: 80px"
+          @on-select="onRangeChange"
+        >
+          <Option v-for="item in dateOptions" :key="item" :value="item">{{
+            item
+          }}</Option>
+        </Select>
+        <label>Количество точек</label>
+        <Select
+          :value="itemCount"
+          style="width: 80px"
+          @on-select="onItemCountChange"
+        >
+          <Option
+            v-for="item in itemCountOptions"
+            :key="item.value"
+            :value="item.value"
+            >{{ item.label }}</Option
+          >
+        </Select>
+      </div>
       <line-chart ref="tempChart" />
       <line-chart ref="pressureChart" />
       <line-chart ref="humidityChart" />
@@ -49,6 +74,15 @@ export default {
       ],
       modal: false,
       loading: false,
+      dateRange: moment().format('MM-YYYY'),
+      itemCount: 50,
+      itemCountOptions: [
+        { label: 50, value: 50 },
+        { label: 100, value: 100 },
+        { label: 300, value: 300 },
+        { label: 500, value: 500 },
+        { label: 'Все', value: 99999999 },
+      ],
     }
   },
   computed: {
@@ -62,24 +96,35 @@ export default {
       }))
       return { time, metrics }
     },
+    dateOptions() {
+      const range = moment().diff(moment('2020/10/01'), 'months')
+      const options = []
+      for (let i = 0; i <= range; i++) {
+        options.push(moment().add(-i, 'month').format('MM-YYYY'))
+      }
+      return options
+    },
   },
   mounted() {
     this.getTelemetry()
   },
   methods: {
-    async getTelemetry(date) {
-      this.telemetry = await this.$api.$get('/telemetry/' + this.device.id)
+    async getTelemetry(date = '') {
+      this.telemetry = await this.$api.$get(
+        `/telemetry/${this.device.id}/${date}`
+      )
     },
     drawCharts() {
       this.modal = true
       this.metrics.forEach((metric, id) => {
+        const telemetry = this.telemetry.slice(-this.itemCount)
         this.$refs[metric.ref].renderChart({
-          labels: this.telemetry.map((x) => moment(x[0]).format('DD/MM HH:mm')),
+          labels: telemetry.map((x) => moment(x[0]).format('DD/MM HH:mm')),
           datasets: [
             {
               label: metric.key,
               backgroundColor: metric.color,
-              data: this.telemetry.map((x) => x[1][id]),
+              data: telemetry.map((x) => x[1][id]),
             },
           ],
         })
@@ -99,6 +144,14 @@ export default {
         })
       }
       this.loading = false
+    },
+    async onRangeChange(value) {
+      await this.getTelemetry(value)
+      this.drawCharts()
+    },
+    onItemCountChange(value) {
+      this.itemCount = value
+      this.drawCharts()
     },
   },
 }
