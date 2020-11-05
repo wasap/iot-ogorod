@@ -207,5 +207,5 @@ void setupCloudIoT()
   mqtt->setUseLts(true);
   
   mqtt->startMQTT(); // Opens connection
-  mqtt->mqttConnect();
+  // mqtt->mqttConnect();
 }
