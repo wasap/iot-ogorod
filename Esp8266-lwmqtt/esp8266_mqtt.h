@@ -163,7 +163,7 @@ bool publishTelemetry(String subfolder, const char *data, int length)
 // Place your message handler code here.
 void messageReceived(String &topic, String &payload)
 {
-  Serial.println("incoming: " + topic + " - " + payload);
+//  Serial.println("incoming: " + topic + " - " + payload);
   
   StaticJsonDocument<300> doc;
   deserializeJson(doc, payload);
