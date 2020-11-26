@@ -27,7 +27,7 @@ router.post('/devices/:id', async (ctx) => {
   const formattedName = iotClient.devicePath(
     config.projectId,
     config.cloudRegion,
-    config.registryId,
+    device.registryId,
     device.deviceId
   )
   const binaryData = Buffer.from(JSON.stringify({ isOn: device.on, disableSecs: ctx.request.body.disableSecs, deviceType: device.type }))

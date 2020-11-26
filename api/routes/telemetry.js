@@ -37,7 +37,7 @@ router.post('/telemetry/:id', async ctx => {
   const formattedName = iotClient.devicePath(
     config.projectId,
     config.cloudRegion,
-    config.registryId,
+    device.registryId,
     device.deviceId
   )
   const binaryData = Buffer.from(JSON.stringify({ deviceType: device.type }))
