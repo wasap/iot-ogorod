@@ -54,8 +54,43 @@ String getDefaultSensor()
   return "Wifi: " + String(WiFi.RSSI()) + "db";
 }
 
+void setupWifi()
+{
+  int retryNum = 0;
+  WiFi.mode(WIFI_STA);
+  
+  
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    if(retryNum < 80){
+      Serial.println("Connecting to WiFi1");
+      Serial.println(ssid);
+      if(retryNum == 0)
+      WiFi.begin(ssid, password);
+      retryNum += 1;
+      if(retryNum == 80) retryNum = 160;
+    } else {
+      Serial.println("Connecting to WiFi2");
+      Serial.println(ssid2);
+      if(retryNum == 160)
+      WiFi.begin(ssid2, password2);
+      retryNum -= 1;
+      if(retryNum == 80) retryNum = 0;
+    }
+    delay(100);
+  }
+
+  configTime(0, 0, ntp_primary, ntp_secondary);
+  Serial.println("Waiting on time sync...");
+  while (time(nullptr) < 1510644967)
+  {
+    delay(10);
+  }
+}
+
 String getJwt()
 {
+  if (WiFi.status() != WL_CONNECTED) setupWifi();
   // Disable software watchdog as these operations can take a while.
   ESP.wdtDisable();
   iat = time(nullptr);
@@ -107,23 +142,7 @@ void setupCert()
   netClient->setTrustAnchors(&certList);
 }
 
-void setupWifi()
-{
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  Serial.println("Connecting to WiFi");
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(100);
-  }
 
-  configTime(0, 0, ntp_primary, ntp_secondary);
-  Serial.println("Waiting on time sync...");
-  while (time(nullptr) < 1510644967)
-  {
-    delay(10);
-  }
-}
 
 void connectWifi()
 {

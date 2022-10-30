@@ -12,17 +12,18 @@ void _blinkPlate(int times){
 }
 
 void _setRelay(bool state){
-  if(state){
-    digitalWrite(PIN_D6, LOW);
-    delay(15000);
-//    _blinkPlate(2);
-    digitalWrite(PIN_D6, HIGH);
-  } else {
-    digitalWrite(PIN_D5, LOW);
-    delay(15000);
-    digitalWrite(PIN_D5, HIGH);
-//    _blinkPlate(3);
-  }
+  digitalWrite(PIN_D6, state ? LOW : HIGH);
+//  if(state){
+//    digitalWrite(PIN_D6, LOW);
+//    delay(15000);
+////    _blinkPlate(2);
+//    digitalWrite(PIN_D6, HIGH);
+//  } else {
+//    digitalWrite(PIN_D5, LOW);
+//    delay(15000);
+//    digitalWrite(PIN_D5, HIGH);
+////    _blinkPlate(3);
+//  }
 }
 
 void callRelay(bool isOn, int disableSecs){

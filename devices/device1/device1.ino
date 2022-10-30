@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *****************************************************************************/
+ // sudo chown username /dev/ttyUSB0
 
 #if defined(ARDUINO_SAMD_MKR1000) or defined(ESP32)
 #define __SKIP_ESP8266__
