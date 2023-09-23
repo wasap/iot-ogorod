@@ -9,6 +9,8 @@ const moment = require('moment')
 const { Storage } = require('@google-cloud/storage')
 const storage = new Storage()
 
+const functions = require('@google-cloud/functions-framework');
+
 const myBucket = storage.bucket('telemetry-123')
 
 const getCurrentDate = () => moment().format('MM-YYYY')
@@ -23,10 +25,12 @@ const getTelemetry = async (id, date = getCurrentDate()) => {
   }
 }
 
-exports.helloPubSub = async (event, context) => {
-  const message = event.data
-    ? Buffer.from(event.data, 'base64').toString()
-    : 'Hello, World';
+// Register a CloudEvent callback with the Functions Framework that will
+// be executed when the Pub/Sub trigger topic receives a message.
+functions.cloudEvent('helloPubSub', async event => {
+  // The Pub/Sub message is passed as the CloudEvent's data payload.
+  const message = Buffer.from(event.data.message.data, 'base64').toString()
+  console.log('message', message)
   let row;
   try{row = JSON.parse(message)} catch(e) {return};
   if(!row instanceof Array) return;
@@ -38,6 +42,8 @@ exports.helloPubSub = async (event, context) => {
   const contents = JSON.stringify(telemetry)
 
   await file.save(contents)
+
+  if(row[0]>3) return;
   
   const TelegramBot = require('node-telegram-bot-api');
 
@@ -49,4 +55,8 @@ exports.helloPubSub = async (event, context) => {
   await bot.sendMessage('-296842977', `<b>температура</b> ${row[0]}
 <b>давление</b> ${row[1]}
 <b>влажность</b> ${row[2]}`);
-};
+});
+
+
+
+
