@@ -6,6 +6,7 @@
  */
 
 const moment = require('moment')
+const config = require('./config')
 const { Storage } = require('@google-cloud/storage')
 const storage = new Storage()
 
@@ -34,7 +35,7 @@ functions.cloudEvent('helloPubSub', async event => {
   let row;
   try{row = JSON.parse(message)} catch(e) {return};
   if(!row instanceof Array) return;
-  const id = 5632499082330112;
+  const id = config.deviceId;
    const telemetry = await getTelemetry(id)
   telemetry.push([Date.now(), row])
 
@@ -48,11 +49,11 @@ functions.cloudEvent('helloPubSub', async event => {
   const TelegramBot = require('node-telegram-bot-api');
 
   // replace the value below with the Telegram token you receive from @BotFather
-  const token = '1486100076:AAGji-s2GHy-9U5FhVL7e5RiQPgovAX4SfM';
+  const token = config.telegramBotToken;
 
   // Create a bot that uses 'polling' to fetch new updates
   const bot = new TelegramBot(token);
-  await bot.sendMessage('-296842977', `<b>температура</b> ${row[0]}
+  await bot.sendMessage(config.telegramChatId, `<b>температура</b> ${row[0]}
 <b>давление</b> ${row[1]}
 <b>влажность</b> ${row[2]}`);
 });
