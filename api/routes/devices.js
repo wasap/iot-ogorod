@@ -2,6 +2,7 @@ const Router = require('@koa/router')
 const router = new Router()
 const { Datastore } = require('@google-cloud/datastore')
 const config = require('../config')
+const telemetry = require('../services/telemetry')
 
 const iot = require('@google-cloud/iot')
 const iotClient = new iot.v1.DeviceManagerClient({
@@ -12,12 +13,8 @@ const iotClient = new iot.v1.DeviceManagerClient({
 const datastore = new Datastore()
 
 router.get('/devices', async (ctx) => {
-  const query = datastore.createQuery('Devices')
-  const [devices] = await datastore.runQuery(query)
-  ctx.body = (devices.map(x => {
-    x.id = x[Datastore.KEY].id
-    return x
-  }))
+  ctx.body = await telemetry.listDevices()
+  ctx.status = 200
 })
 router.post('/devices/:id', async (ctx) => {
   const [device] = await datastore.get(datastore.key(['Devices', +ctx.params.id]))
