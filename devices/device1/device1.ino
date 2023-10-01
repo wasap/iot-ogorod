@@ -14,31 +14,6 @@
  *****************************************************************************/
  // sudo chown username /dev/ttyUSB0
 
-#if defined(ARDUINO_SAMD_MKR1000) or defined(ESP32)
-#define __SKIP_ESP8266__
-#endif
-
-#if defined(ESP8266)
-#define __ESP8266_MQTT__
-#endif
-
-#ifdef __SKIP_ESP8266__
-
-#include <Arduino.h>
-
-void setup(){
-  Serial.begin(115200);
-}
-
-void loop(){
-  Serial.println("Hello World");
-}
-
-#endif
-
-#ifdef __ESP8266_MQTT__
-#include <CloudIoTCore.h>
-
 #include "esp8266_mqtt.h"
 
 
@@ -53,7 +28,6 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  setupCloudIoT(); // Creates globals for MQTT
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(PIN_D6, OUTPUT);
   digitalWrite(PIN_D6, HIGH);
@@ -62,33 +36,19 @@ void setup()
     if (!bme.begin(BME_ADDR)) {
         Serial.println("Could not find a valid BME280 sensor, check wiring!");
     }
+  setupWifi();
+  publishTelemetry(printBME280());
 }
 
 unsigned long lastMillis = 0;
 void loop()
 {
-  mqtt->loop();
-  delay(10); // <- fixes some issues with WiFi stability
-
-  if (!mqttClient->connected())
-  {
-
-    // #ifdef ESP32
-    // connect();
-    // #endif
-
-    // #ifdef __ESP8266_MQTT_H__
-    ESP.wdtDisable();
-    connect();
-    ESP.wdtEnable(0);
-    // #endif
-  }
 
   // TODO: Replace with your code here
  if (millis() - lastMillis > 3600000)
  {
+   setupWifi();
    lastMillis = millis();
    publishTelemetry(printBME280());
  }
 }
-#endif
