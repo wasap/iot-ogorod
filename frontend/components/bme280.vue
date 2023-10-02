@@ -21,7 +21,7 @@
             {{ metric.value }}
           </div>
         </div>
-        <Button :loading="loading" @click.stop="loadSensor">Обновить</Button>
+        <!-- <Button :loading="loading" @click.stop="loadSensor">Обновить</Button> -->
       </div>
     </div>
 

@@ -12,8 +12,8 @@
     "lint": "npm run lint:js && npm run lint:style",
     "cp": "cp ../config.js  ./config.js",
     "build": "gcloud builds submit --tag gcr.io/ogorod-289421/ui",
-    "deploy": "gcloud run deploy ui --image gcr.io/ogorod-289421/ui --platform managed --timeout 10 --memory 128 --concurrency 1",
-    "all": "npm run cp && npm run build && npm run deploy",
+    "deploy": "gcloud run deploy ui --image gcr.io/ogorod-289421/ui --platform managed --timeout 10 --memory 128Mi --concurrency 1 --region europe-west4",
+    "all": "npm run build && npm run deploy",
     "test": "jest"
   },
   "lint-staged": {
@@ -43,7 +43,7 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.1.0",
-    "eslint": "^7.5.0",
+    "eslint": "*",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-nuxt": "^1.0.0",
     "eslint-plugin-prettier": "^3.1.4",
