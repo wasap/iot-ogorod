@@ -36,7 +36,6 @@ void setup()
     if (!bme.begin(BME_ADDR)) {
         Serial.println("Could not find a valid BME280 sensor, check wiring!");
     }
-  setupWifi();
   publishTelemetry(printBME280());
 }
 
@@ -47,7 +46,6 @@ void loop()
   // TODO: Replace with your code here
  if (millis() - lastMillis > 3600000)
  {
-   setupWifi();
    lastMillis = millis();
    publishTelemetry(printBME280());
  }

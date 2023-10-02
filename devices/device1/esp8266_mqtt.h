@@ -84,6 +84,7 @@ void setupWifi()
 
 void publishTelemetry(String data)
 {
+  setupWifi();
   Serial.println(data);
   HTTPClient http;
   WiFiClientSecure client;
@@ -106,6 +107,7 @@ void publishTelemetry(String data)
   }
   // Free resources
   http.end();
+  WiFi.mode(WIFI_OFF);
 }
 
 
