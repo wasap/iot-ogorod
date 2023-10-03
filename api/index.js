@@ -36,7 +36,6 @@ app.use(compress({
 
 app.use(async (ctx, next) => {
   if (ctx.request.method === 'OPTIONS') return next()
-  console.log(ctx.request.method)
   if (ctx.headers.token === config.token) {
     return next()
   }
