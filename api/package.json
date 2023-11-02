@@ -9,7 +9,7 @@
     "start": "node index",
     "cp": "cp ../config.js  ./config.js",
     "build": "gcloud builds submit --tag gcr.io/ogorod-289421/api",
-    "deploy": "gcloud run deploy api --image gcr.io/ogorod-289421/api --platform managed --timeout 10 --memory 128Mi --concurrency 1 --region europe-west4",
+    "deploy": "gcloud run deploy api --image gcr.io/ogorod-289421/api --platform managed --timeout 10 --memory 256Mi --concurrency 1 --region europe-west4",
     "all": "npm run build && npm run deploy"
   },
   "author": "",
